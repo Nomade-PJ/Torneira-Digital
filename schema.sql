@@ -12,6 +12,7 @@ create table if not exists public.usuarios (
   cnpj_cpf text,
   role text,
   avatar_url text,
+  senha_hash text,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz
 );
