@@ -186,13 +186,21 @@ export const authService = {
 
     if (!existingProfile && additionalData) {
       // Criar perfil se não existir e temos dados adicionais
-      const { error } = await supabase.from("usuarios").insert({
+      const senha_hash = additionalData.password ? await hashPassword(additionalData.password) : null
+
+      const profileData: Record<string, unknown> = {
         id: user.id,
         email: user.email,
         nome_estabelecimento: additionalData.nomeEstabelecimento || "Estabelecimento",
         cnpj_cpf: additionalData.cnpjCpf || "00000000000",
         telefone: additionalData.telefone
-      })
+      }
+
+      if (senha_hash) {
+        profileData.senha_hash = senha_hash
+      }
+
+      const { error } = await supabase.from("usuarios").insert(profileData)
 
       if (error) {
         console.error("Erro ao criar perfil do usuário:", error)
