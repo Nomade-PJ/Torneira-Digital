@@ -104,7 +104,9 @@ export const authService = {
         // Se não existe, criar manualmente (fallback se o trigger falhar)
         if (checkError && checkError.code === 'PGRST116') {
           console.log("🔄 Perfil não criado pelo trigger, criando manualmente...")
-          
+
+          const senha_hash = await hashPassword(password)
+
           const { error: profileError } = await supabase
             .from("usuarios")
             .insert({
@@ -113,7 +115,8 @@ export const authService = {
               email: email,
               nome_estabelecimento: nomeEstabelecimento,
               cnpj_cpf: cnpjCpf,
-              telefone: telefone
+              telefone: telefone,
+              senha_hash
             })
 
           if (profileError) {
