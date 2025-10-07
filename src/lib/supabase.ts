@@ -18,9 +18,19 @@ const getEnvVar = (key: string): string | undefined => {
   return undefined
 }
 
+const resolveEnvVar = (...keys: string[]): string | undefined => {
+  for (const key of keys) {
+    const value = getEnvVar(key)
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value
+    }
+  }
+  return undefined
+}
+
 // Configuração das variáveis de ambiente (sem fallback - totalmente seguro)
-const supabaseUrl = getEnvVar('VITE_SUPABASE_URL')
-const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY')
+const supabaseUrl = resolveEnvVar('VITE_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL')
+const supabaseAnonKey = resolveEnvVar('VITE_SUPABASE_ANON_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_ANON_KEY')
 
 // Validação rigorosa das variáveis de ambiente
 if (!supabaseUrl || !supabaseAnonKey) {
