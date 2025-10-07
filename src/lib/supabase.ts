@@ -1,10 +1,36 @@
 import { createClient } from "@supabase/supabase-js"
 
+// Helper to read env vars in both Vite (import.meta.env) and Node (process.env)
+const getEnvVar = (key: string): string | undefined => {
+  try {
+    // Try to read Vite-provided env (available in the browser build/runtime)
+    const meta = (import.meta as any)
+    if (meta && meta.env && meta.env[key]) return meta.env[key]
+  } catch (e) {
+    // import.meta access can throw in some environments; ignore
+  }
+
+  // Node environment fallback (SSR, serverless)
+  if (typeof process !== 'undefined' && process.env) {
+    return (process.env as any)[key]
+  }
+
+  return undefined
+}
+
+const resolveEnvVar = (...keys: string[]): string | undefined => {
+  for (const key of keys) {
+    const value = getEnvVar(key)
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value
+    }
+  }
+  return undefined
+}
+
 // Configuração das variáveis de ambiente (sem fallback - totalmente seguro)
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-
+const supabaseUrl = resolveEnvVar('VITE_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL')
+const supabaseAnonKey = resolveEnvVar('VITE_SUPABASE_ANON_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_ANON_KEY')
 
 // Validação rigorosa das variáveis de ambiente
 if (!supabaseUrl || !supabaseAnonKey) {
@@ -46,5 +72,3 @@ const supabaseOptions = {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, supabaseOptions)
-
-

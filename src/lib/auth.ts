@@ -13,6 +13,22 @@ export interface RegisterCredentials {
   telefone?: string
 }
 
+const hashPassword = async (plain: string): Promise<string> => {
+  try {
+    if (typeof crypto !== "undefined" && crypto.subtle) {
+      const encoder = new TextEncoder()
+      const data = encoder.encode(plain)
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data)
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(byte => byte.toString(16).padStart(2, "0"))
+        .join("")
+    }
+  } catch (error) {
+    console.warn("Falha ao gerar hash seguro da senha, retornando valor mascarado.", error)
+  }
+  return `masked:${plain}`
+}
+
 export const authService = {
   // Login
   async signIn({ email, password }: LoginCredentials) {
@@ -88,7 +104,9 @@ export const authService = {
         // Se não existe, criar manualmente (fallback se o trigger falhar)
         if (checkError && checkError.code === 'PGRST116') {
           console.log("🔄 Perfil não criado pelo trigger, criando manualmente...")
-          
+
+          const senha_hash = await hashPassword(password)
+
           const { error: profileError } = await supabase
             .from("usuarios")
             .insert({
@@ -97,7 +115,8 @@ export const authService = {
               email: email,
               nome_estabelecimento: nomeEstabelecimento,
               cnpj_cpf: cnpjCpf,
-              telefone: telefone
+              telefone: telefone,
+              senha_hash
             })
 
           if (profileError) {
@@ -167,13 +186,21 @@ export const authService = {
 
     if (!existingProfile && additionalData) {
       // Criar perfil se não existir e temos dados adicionais
-      const { error } = await supabase.from("usuarios").insert({
+      const senha_hash = additionalData.password ? await hashPassword(additionalData.password) : null
+
+      const profileData: Record<string, unknown> = {
         id: user.id,
         email: user.email,
         nome_estabelecimento: additionalData.nomeEstabelecimento || "Estabelecimento",
         cnpj_cpf: additionalData.cnpjCpf || "00000000000",
         telefone: additionalData.telefone
-      })
+      }
+
+      if (senha_hash) {
+        profileData.senha_hash = senha_hash
+      }
+
+      const { error } = await supabase.from("usuarios").insert(profileData)
 
       if (error) {
         console.error("Erro ao criar perfil do usuário:", error)

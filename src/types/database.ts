@@ -423,6 +423,7 @@ export type Database = {
           nome_completo: string | null
           nome_estabelecimento: string | null
           role: string | null
+          senha_hash: string | null
           telefone: string | null
           updated_at: string | null
         }
@@ -436,6 +437,7 @@ export type Database = {
           nome_completo?: string | null
           nome_estabelecimento?: string | null
           role?: string | null
+          senha_hash?: string | null
           telefone?: string | null
           updated_at?: string | null
         }
@@ -449,6 +451,7 @@ export type Database = {
           nome_completo?: string | null
           nome_estabelecimento?: string | null
           role?: string | null
+          senha_hash?: string | null
           telefone?: string | null
           updated_at?: string | null
         }

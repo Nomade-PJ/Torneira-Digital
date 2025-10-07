@@ -1,5 +1,3 @@
-
-
 import { useState } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
@@ -312,7 +310,7 @@ export function ProdutoModal({ open, onOpenChange, onSave, produto }: ProdutoMod
                   <Input
                     id="data_validade"
                     type="date"
-                    value={formData.data_validade}
+                    value={formData.data_validade ?? ""}
                     onChange={(e) => handleInputChange("data_validade", e.target.value)}
                     className="mt-2 h-12 bg-slate-800/80 border-slate-600/50 focus:border-purple-500/50 focus:ring-purple-500/20 text-slate-100 font-medium"
                   />
