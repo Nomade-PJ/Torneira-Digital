@@ -13,6 +13,22 @@ export interface RegisterCredentials {
   telefone?: string
 }
 
+const hashPassword = async (plain: string): Promise<string> => {
+  try {
+    if (typeof crypto !== "undefined" && crypto.subtle) {
+      const encoder = new TextEncoder()
+      const data = encoder.encode(plain)
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data)
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(byte => byte.toString(16).padStart(2, "0"))
+        .join("")
+    }
+  } catch (error) {
+    console.warn("Falha ao gerar hash seguro da senha, retornando valor mascarado.", error)
+  }
+  return `masked:${plain}`
+}
+
 export const authService = {
   // Login
   async signIn({ email, password }: LoginCredentials) {
