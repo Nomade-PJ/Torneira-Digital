@@ -55,8 +55,8 @@ npm run dev
 
 2. **Configurar Variáveis de Ambiente:**
    ```
-   VITE_SUPABASE_URL=https://gkwdspvvpucuoeupxnny.supabase.co
-   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdrd2RzcHZ2cHVjdW9ldXB4bm55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMjczMzEsImV4cCI6MjA2OTkwMzMzMX0.QyiBYqQIlegSfv8UKVR3gQRchaR_C23_6M78RNLumzk
+   VITE_SUPABASE_URL=
+   VITE_SUPABASE_ANON_KEY=
    ```
 
 3. **Deploy Automático:** O projeto está configurado com `vercel.json` para deploy automático!
